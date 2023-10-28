@@ -1,0 +1,55 @@
+
+#include <LiquidCrystal_I2C.h>
+const int sensor_pin1 = A1;	/* Soil moisture sensor O/P pin */
+const int sensor_pin2 = A2;
+const int ldr = A4 ; 
+LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x3F for a 16 chars and 2 line display
+int i = 0;
+
+
+void setup() {
+  Serial.begin(9600);	/* Define baud rate for serial communication */
+  lcd.init();
+  lcd.backlight();
+   
+}
+
+void loop() {
+  lcd.clear(); 
+  float moisture_percentage1;
+  int sensor_analog1;
+  float moisture_percentage2;
+  int sensor_analog2;
+  int lux_percentage;
+
+  
+  sensor_analog1 = analogRead(sensor_pin1);
+  moisture_percentage1 = ( 100 - ( (sensor_analog1/1023.00) * 100 ) );
+  sensor_analog2 = analogRead(sensor_pin2);
+  moisture_percentage2 = ( 100 - ( (sensor_analog2/1023.00) * 100 ) );
+  lux_percentage = ( 100 - ( (analogRead(ldr)/1023.00) * 100 ) );
+  /*if(moisture_percentage1 == 70){
+    digitalWrite(8 , HIGH);
+  }
+  if(moisture_percentage2 == 70){
+    digitalWrite(8 , HIGH);
+  }*/
+  Serial.println(lux_percentage);
+  lcd.begin(16, 2); // Initialize the LCD with 16 columns and 2 rows
+  lcd.setCursor(0,0);   //Set cursor to character 2 on line 0
+  lcd.print(moisture_percentage1);
+  Serial.println(moisture_percentage1);
+  lcd.setCursor(0, 1); // Move the cursor to the ninth position (8, 0)
+  lcd.print(moisture_percentage2);
+  Serial.println(moisture_percentage2);
+  lcd.setCursor(5,0);
+  lcd.print("m1");
+  lcd.setCursor(5,1);
+  lcd.print("m2");
+  lcd.setCursor(8,0);
+  lcd.print("lux:");
+  lcd.setCursor(13,0);
+  lcd.print(lux_percentage);
+ delay(10000);
+}
+
